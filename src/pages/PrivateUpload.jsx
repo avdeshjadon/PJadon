@@ -55,18 +55,19 @@ export default function PrivateUpload() {
   }, []);
 
   useEffect(() => {
-    if (window.cloudinary) {
+    // Load Cloudinary script if not already loaded
+    if (!window.cloudinary) {
+      const script = document.createElement("script");
+      script.src = "https://upload-widget.cloudinary.com/global/all.js";
+      script.async = true;
+      script.onload = () => initWidget();
+      document.body.appendChild(script);
+      return () => {
+        if (document.body.contains(script)) document.body.removeChild(script);
+      };
+    } else {
       initWidget();
-      return;
     }
-    const script = document.createElement("script");
-    script.src = "https://upload-widget.cloudinary.com/global/all.js";
-    script.async = true;
-    script.onload = () => initWidget();
-    document.body.appendChild(script);
-    return () => {
-      if (document.body.contains(script)) document.body.removeChild(script);
-    };
   }, []);
 
   function initWidget() {
@@ -125,7 +126,15 @@ export default function PrivateUpload() {
   }
 
   function openWidget() {
-    if (widgetRef.current) widgetRef.current.open();
+    if (widgetRef.current) {
+      widgetRef.current.open();
+    } else {
+      // Fallback: reload widget if not initialized
+      initWidget();
+      setTimeout(() => {
+        if (widgetRef.current) widgetRef.current.open();
+      }, 500);
+    }
   }
 
   return (
