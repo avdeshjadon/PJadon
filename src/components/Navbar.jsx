@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
-import { Images, Upload, LogOut, Sun, Moon } from "lucide-react";
+import { Images, Upload, LogOut, Sun, Moon, Lock } from "lucide-react";
 
 export default function Navbar() {
   const { currentUser, logout } = useAuth();
@@ -32,6 +32,10 @@ export default function Navbar() {
         <NavLink to="/upload" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
           <Upload size={18} />
           <span>Upload</span>
+        </NavLink>
+        <NavLink to="/private" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
+          <Lock size={18} />
+          <span>Private</span>
         </NavLink>
       </div>
 

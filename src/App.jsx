@@ -7,6 +7,9 @@ import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Gallery from "./pages/Gallery";
 import Upload from "./pages/Upload";
+import PrivatePassword from "./pages/PrivatePassword";
+import PrivateGallery from "./pages/PrivateGallery";
+import PrivateUpload from "./pages/PrivateUpload";
 
 function Layout({ children }) {
   return (
@@ -43,6 +46,34 @@ export default function App() {
                 <ProtectedRoute>
                   <Layout>
                     <Upload />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/private"
+              element={
+                <ProtectedRoute>
+                  <PrivatePassword />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/private/gallery"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <PrivateGallery />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/private/upload"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <PrivateUpload />
                   </Layout>
                 </ProtectedRoute>
               }
