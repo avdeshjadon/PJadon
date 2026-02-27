@@ -5,6 +5,7 @@ const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const API_KEY    = import.meta.env.VITE_CLOUDINARY_API_KEY;
 const API_SECRET = import.meta.env.VITE_CLOUDINARY_API_SECRET;
 const PAGE_SIZE  = 100;
+const PRIVATE_TAG = "private_prachi";
 
 /* ─── API helpers ─── */
 function buildBasicAuth() {
@@ -13,7 +14,7 @@ function buildBasicAuth() {
 async function fetchAllResources(resourceType = "image") {
   let all = [], cursor = null;
   do {
-    const params = new URLSearchParams({ max_results: "500" });
+    const params = new URLSearchParams({ max_results: "500", tags: "true" });
     if (cursor) params.set("next_cursor", cursor);
     const res = await fetch(
       `/cloudinary-api/v1_1/${CLOUD_NAME}/resources/${resourceType}?${params}`,
@@ -220,11 +221,14 @@ export default function Gallery() {
         fetchAllResources("image"),
         fetchAllResources("video"),
       ]);
-      const sort = (arr, type) =>
-        arr.map((r) => ({ ...r, media_type: type }))
-           .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      setAllImages(sort(imgs, "image"));
-      setAllVideos(sort(vids, "video"));
+      // Filter out private tagged resources
+      const filterPublic = (arr, type) =>
+        arr
+          .filter((r) => !r.tags || !r.tags.includes(PRIVATE_TAG))
+          .map((r) => ({ ...r, media_type: type }))
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      setAllImages(filterPublic(imgs, "image"));
+      setAllVideos(filterPublic(vids, "video"));
     } catch { setError("Could not load gallery."); }
     finally { setLoading(false); }
   }, []);
